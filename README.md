@@ -213,21 +213,8 @@ Choose from three optimized portfolios:
 - **Percentile Analysis**: 5th, 50th, 95th percentile outcomes
 - **Path Visualization**: Sample simulation trajectories
 
-## Technical Architecture
 
-### C Engine Implementation
+## Disclaimer
 
-#### High-Performance Computing Features
-- **Custom RNG**: Fast linear congruential generator with Box-Muller transform
-- **SIMD Optimization**: Compiler vectorization with `-march=native`
-- **OpenMP Parallelization**: Multi-threaded Monte Carlo simulations
-- **Memory Efficiency**: Contiguous memory allocation and cache-friendly algorithms
-
-#### Core C Functions
-```c
-SimulationResults* monte_carlo_simulation(Portfolio *portfolio, 
-                                        int simulation_years, 
-                                        int n_simulations, 
-                                        double initial_value);
-
-void calculate_covariance(double *retur
+This application is for experimentation and research purposes only. Past performance does not guarantee future results. Always consult with qualified financial advisors before making investment decisions (please buy broad market ETFs).
+Veer Sandhu - 2025
