@@ -6,8 +6,6 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from scipy.optimize import minimize
 import yfinance as yf
-import portfolio_interface
-from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -326,7 +324,7 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
         fig_hist.add_vline(x=np.median(final_values), line_dash="dash", 
                             line_color="red", annotation_text="Median")
         fig_hist.add_vline(x=initial_investment, line_dash="dash", 
-                            line_color="black", annotation_text="Initial")
+                            line_color="white", annotation_text="Initial")
         
         fig_hist.update_layout(
             title=f"Distribution of Final Portfolio Values (Year {simulation_years})",
@@ -494,3 +492,4 @@ st.markdown("---")
 st.markdown("*Built with Python, Scipy, Yahoo Finance, and Streamlit, powered by fundamental statistics*")
 st.markdown("**Features:** Modern Portfolio Theory • Monte Carlo Simulation • Risk Metrics • VaR/CVaR Analysis")
 st.caption('Veer Sandhu - 2025')
+st.caption("[Github](https://github.com/Real-VeerSandhu/Stock-Portfolio-Lab)")
