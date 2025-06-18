@@ -5,6 +5,8 @@
 #include <time.h>
 #include <string.h>
 
+
+
 // Structure to hold portfolio data
 typedef struct {
     double *returns;
