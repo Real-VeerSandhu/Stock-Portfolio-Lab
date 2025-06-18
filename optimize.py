@@ -25,6 +25,21 @@ if 'optimal_weights_minvol' not in st.session_state:
 if 'equal_weights' not in st.session_state:
     st.session_state.equal_weights = None
 
+if 'analysis_complete' not in st.session_state:
+    st.session_state.analysis_complete = False
+if 'returns' not in st.session_state:
+    st.session_state.returns = None
+if 'stocks' not in st.session_state:
+    st.session_state.stocks = None
+if 'simulation_years' not in st.session_state:
+    st.session_state.simulation_years = None
+if 'num_simulations' not in st.session_state:
+    st.session_state.num_simulations = None
+if 'initial_investment' not in st.session_state:
+    st.session_state.initial_investment = None
+if 'data' not in st.session_state:
+    st.session_state.data = False
+
 @st.cache_data
 def load_ticker_data(csv_file):
     """Load ticker data from CSV file with caching for better performance"""
@@ -97,7 +112,8 @@ risk_free_rate = st.sidebar.number_input(
 # Simulation parameters
 st.sidebar.subheader("Simulation Parameters")
 simulation_years = st.sidebar.slider("Simulation years:", 1, 20, 5)
-num_simulations = st.sidebar.slider("Number of simulations:", 100, 10000, 1000, step=100)
+num_simulations = st.sidebar.slider("Number of simulations:", 10, 10000, 1000, step=100)
+st.session_state.num_simulations = num_simulations
 initial_investment = st.sidebar.number_input(
     "Initial investment ($):",
     min_value=1000,
@@ -363,14 +379,19 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
 sim_ran = False   
 
 # Main app logic
-if st.button("Run Analysis", type="primary"):
+run_botton = st.button("Run Analysis", type="primary")
+if run_botton or st.session_state.analysis_complete:
+    st.cache_data.clear()
     if len(stocks) < 2:
-        st.error("Please enter at least 2 stock symbols")
+        st.warning("Please enter at least 2 stock symbols")
+        st.session_state.data = False
     else:
+        # Store all data in session state for later use
+        
         with st.spinner("Fetching data and optimizing portfolio..."):
             # Fetch data
             price_data = fetch_stock_data(stocks, lookback_period)
-            
+            st.session_state.data = True
             if price_data is not None and not price_data.empty:
                 # Calculate returns
                 returns = price_data.pct_change().dropna()
@@ -379,7 +400,7 @@ if st.button("Run Analysis", type="primary"):
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    st.subheader("📊 Maximum Sharpe Ratio")
+                    st.subheader("Maximum Sharpe Ratio")
                     optimal_weights_sharpe = optimize_portfolio(returns, 'sharpe')
                     port_return_sharpe, port_vol_sharpe, sharpe_sharpe = calculate_portfolio_metrics(returns, optimal_weights_sharpe)
                     
@@ -398,7 +419,7 @@ if st.button("Run Analysis", type="primary"):
                     st.metric("Sharpe Ratio", f"{sharpe_sharpe:.3f}")
                 
                 with col2:
-                    st.subheader("🛡️ Minimum Volatility")
+                    st.subheader("Minimum Volatility")
                     optimal_weights_minvol = optimize_portfolio(returns, 'min_vol')
                     port_return_minvol, port_vol_minvol, sharpe_minvol = calculate_portfolio_metrics(returns, optimal_weights_minvol)
                     
@@ -416,7 +437,7 @@ if st.button("Run Analysis", type="primary"):
                     st.metric("Sharpe Ratio", f"{sharpe_minvol:.3f}")
                 
                 with col3:
-                    st.subheader("⚖️ Equal Weight")
+                    st.subheader("Equal Weight")
                     equal_weights = np.array([1/len(stocks)] * len(stocks))
                     port_return_equal, port_vol_equal, sharpe_equal = calculate_portfolio_metrics(returns, equal_weights)
                     
@@ -432,33 +453,43 @@ if st.button("Run Analysis", type="primary"):
                     st.metric("Expected Return", f"{port_return_equal:.2%}")
                     st.metric("Volatility", f"{port_vol_equal:.2%}")
                     st.metric("Sharpe Ratio", f"{sharpe_equal:.3f}")
+                st.session_state.returns = returns
+                st.session_state.stocks = stocks
+                st.session_state.optimal_weights_sharpe = optimal_weights_sharpe
+                st.session_state.optimal_weights_minvol = optimal_weights_minvol
+                st.session_state.equal_weights = equal_weights
+                st.session_state.simulation_years = simulation_years
+                st.session_state.num_simulations = num_simulations
+                st.session_state.initial_investment = initial_investment
+                st.session_state.analysis_complete = True
+                    
             else:
                 st.error("Failed to fetch stock data. Please check the symbols and try again.")
                 
-        # Portfolio selection for simulation
+
+# Portfolio selection and simulation (outside the button block)
+if run_botton or st.session_state.get('analysis_complete', False):
+    if st.session_state.data:
         st.subheader("🎯 Select Portfolio for Simulation")
         portfolio_choice = st.selectbox(
             "Choose portfolio:",
-            ["Maximum Sharpe Ratio", "Minimum Volatility", "Equal Weight"]
+            ["Maximum Sharpe Ratio", "Minimum Volatility", "Equal Weight"],
+            key="portfolio_selector"  # Add a key to maintain state
         )
         
-        sim_ran = True
-        
-        if sim_ran:
-            if portfolio_choice == "Maximum Sharpe Ratio":
-                selected_weights = optimal_weights_sharpe
-                st.session_state.optimal_weights_sharpe = optimal_weights_sharpe
-                display_statistics(returns, st.session_state.optimal_weights_sharpe, simulation_years, num_simulations, initial_investment)
-            elif portfolio_choice == "Minimum Volatility":
-                selected_weights = optimal_weights_minvol
-                st.session_state.optimal_weights_minvol = optimal_weights_minvol  
-                display_statistics(returns, st.session_state.optimal_weights_minvol, simulation_years, num_simulations, initial_investment)
-            else:
-                selected_weights = equal_weights
-                st.session_state.equal_weights = equal_weights
-                display_statistics(returns, st.session_state.equal_weights, simulation_years, num_simulations, initial_investment)
-
-        sim_ran = False
+        # Display simulation based on selected portfolio using stored parameters
+        if portfolio_choice == "Maximum Sharpe Ratio":
+            display_statistics(st.session_state.returns, st.session_state.optimal_weights_sharpe, 
+                            st.session_state.simulation_years, st.session_state.num_simulations, 
+                            st.session_state.initial_investment)
+        elif portfolio_choice == "Minimum Volatility":
+            display_statistics(st.session_state.returns, st.session_state.optimal_weights_minvol, 
+                            st.session_state.simulation_years, st.session_state.num_simulations, 
+                            st.session_state.initial_investment)
+        else:
+            display_statistics(st.session_state.returns, st.session_state.equal_weights, 
+                            st.session_state.simulation_years, st.session_state.num_simulations, 
+                            st.session_state.initial_investment)
                 # Run Monte Carlo simulation
                 # with st.spinner("Running Monte Carlo simulation..."):
                 #     simulations = monte_carlo_simulation(returns, selected_weights, 
