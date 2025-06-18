@@ -1,6 +1,6 @@
 # Portfolio Lab
 
-A quantitative finance application for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations, with an optimized C computational engine.
+A quantitative finance [application](https://portfolio-lab.streamlit.app/) for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations, with an optimized C computational engine.
 
 ## Overview
 
