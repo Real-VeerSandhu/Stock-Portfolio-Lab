@@ -6,6 +6,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from scipy.optimize import minimize
 import yfinance as yf
+import portfolio_interface
 from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
