@@ -1,6 +1,6 @@
-# Portfolio Lab 📈
+# Portfolio Lab
 
-A sophisticated quantitative finance application for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations.
+A quantitative finance application for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations.
 
 ## Overview
 
@@ -8,18 +8,18 @@ Portfolio Lab is a comprehensive financial analysis tool that enables users to o
 
 ## Features
 
-### 🎯 Portfolio Optimization
+### Portfolio Optimization
 - **Maximum Sharpe Ratio**: Optimize for the best risk-adjusted returns
 - **Minimum Volatility**: Minimize portfolio risk while maintaining diversification
 - **Equal Weight**: Benchmark against naive diversification strategy
 
-### 📊 Advanced Analytics
+### Advanced Analytics
 - **Monte Carlo Simulation**: Generate thousands of potential portfolio paths
 - **Risk Metrics**: VaR, CVaR, Maximum Drawdown analysis
 - **Performance Statistics**: Sharpe ratio, Skewness, Kurtosis
 - **Correlation Analysis**: Asset correlation matrix visualization
 
-### 📈 Interactive Visualizations
+### Interactive Visualizations
 - Portfolio composition pie charts
 - Monte Carlo simulation paths
 - Final value distribution histograms
@@ -263,4 +263,4 @@ Built with:
 
 ## Disclaimer
 
-This application is for educational and research purposes only. Past performance does not guarantee future results. Always consult with qualified financial advisors before making investment decisions.
+This application is for educational and research purposes only. Past performance does not guarantee future results. Always consult with qualified financial advisors before making investment decisions. 
