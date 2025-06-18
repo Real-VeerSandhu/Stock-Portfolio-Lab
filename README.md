@@ -203,11 +203,13 @@ pip install -r requirements.txt
 ### Code Structure
 ```
 portfolio-lab/
-├── app.py                  # Main application
+├── app.py                   # Main application
+├── portfolio_engine.c       # C calculation engine
+├── portfolio_interface.py   # Interface between app & engine
 ├── data/
-│   └── combined_stocks.csv # Stock ticker database
-├── requirements.txt        # Dependencies
-└── README.md               # Documentation
+│   └── combined_stocks.csv  # Stock ticker set
+├── requirements.txt         # Dependencies
+└── README.md                # Documentation
 ```
 
 ### Testing
