@@ -18,8 +18,8 @@ st.set_page_config(
 )
 
 # Title and description
-st.title("🚀 Portfolio Optimization & Monte Carlo Simulation")
-st.markdown("*Advanced quantitative finance tool for portfolio analysis and risk management*")
+st.title("Portfolio Optimization & Monte Carlo Simulation")
+st.markdown("*Quantitative finance tool for portfolio analysis and risk management*")
 
 # Sidebar for inputs
 st.sidebar.header("Portfolio Configuration")
@@ -68,7 +68,7 @@ initial_investment = st.sidebar.number_input(
 def fetch_stock_data(stocks, period):
     """Fetch historical stock data"""
     try:
-        data = yf.download(stocks, period=period, progress=False)['Adj Close']
+        data = yf.download(stocks, period=period, progress=False)['Close']
         if isinstance(data, pd.Series):
             data = data.to_frame()
         data = data.dropna()
@@ -184,7 +184,7 @@ def calculate_advanced_metrics(returns, weights, simulations):
     }
 
 # Main app logic
-if st.button("🔄 Run Analysis", type="primary"):
+if st.button("Run Analysis", type="primary"):
     if len(stocks) < 2:
         st.error("Please enter at least 2 stock symbols")
     else:
@@ -394,5 +394,5 @@ if st.button("🔄 Run Analysis", type="primary"):
 
 # Footer
 st.markdown("---")
-st.markdown("*Built with Streamlit, powered by quantitative finance principles*")
-st.markdown("**Features:** Modern Portfolio Theory • Monte Carlo Simulation • Risk Metrics • VaR/CVaR Analysis")\
+st.markdown("*Built with Python, Scipy, Yahoo Finance, and Streamlit, powered by quantitative finance principles and statistics*")
+st.markdown("**Features:** Modern Portfolio Theory • Monte Carlo Simulation • Risk Metrics • VaR/CVaR Analysis")
