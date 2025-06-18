@@ -12,14 +12,15 @@ Portfolio Lab is a comprehensive financial analysis tool that enables users to o
 Portfolio Lab employs a multi-layer architecture optimized for both performance and usability:
 
 ```
-┌─────────────────────────────────────┐
-│        Streamlit Frontend           │  ← User Interface
-├─────────────────────────────────────┤
-│         Python Core (app.py)        │  ← Business Logic & Data Processing
-├─────────────────────────────────────┤
-│        portfolio_interface.py       │  ← Python-C Bridge Layer
-├─────────────────────────────────────┤
-│         portfolio_engine.c          │  ← High-Performance Computing
+├── app.py                      # Main Streamlit application
+├── portfolio_engine.c          # High-performance C computation engine
+├── portfolio_interface.py      # Python-C bridge interface
+├── portfolio_engine.so         # Compiled C library (generated)
+├── data/
+│   └── combined_stocks.csv     # Stock ticker dataset
+├── requirements.txt            # Python dependencies
+├── Makefile                    # Build automation (optional)
+└── README.md                   # Documentation
 └─────────────────────────────────────┘
 ```
 
