@@ -1,43 +1,10 @@
 # Portfolio Lab
 
-A quantitative finance application for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations, with an optimized C computational engine.
+A quantitative finance application for portfolio optimization and risk management using Modern Portfolio Theory and Monte Carlo simulations.
 
 ## Overview
 
-Portfolio Lab is a comprehensive financial analysis tool that enables users to optimize investment portfolios through advanced statistical methods. The application combines traditional portfolio optimization techniques with Monte Carlo simulations to provide detailed risk assessment and performance forecasting. **Key differentiator**: Core computational functions are implemented in C for maximum performance, with a Python interface for ease of use.
-
-## Architecture
-
-### Hybrid Python-C Design
-Portfolio Lab employs a multi-layer architecture optimized for both performance and usability:
-
-```
-├── app.py                      # Main Streamlit application
-├── portfolio_engine.c          # High-performance C computation engine
-├── portfolio_interface.py      # Python-C bridge interface
-├── portfolio_engine.so         # Compiled C library (generated)
-├── data/
-│   └── combined_stocks.csv     # Stock ticker dataset
-├── requirements.txt            # Python dependencies
-├── Makefile                    # Build automation (optional)
-└── README.md                   # Documentation
-└─────────────────────────────────────┘
-```
-
-### Performance Layer (C Engine)
-The computational core (`portfolio_engine.c`) handles:
-- **Monte Carlo Simulations**: Optimized random number generation with Box-Muller transform
-- **Matrix Operations**: Efficient covariance matrix calculations
-- **Risk Metrics**: VaR, CVaR, and drawdown computations
-- **Statistical Analysis**: Moments calculation (skewness, kurtosis)
-- **Memory Management**: Optimized allocation and cleanup
-
-### Interface Layer (Python Bridge)
-The `portfolio_interface.py` module provides:
-- **C Library Loading**: Dynamic linking with compiled C engine
-- **Data Marshaling**: Seamless numpy array ↔ C array conversion  
-- **Type Safety**: Robust ctypes interface with error handling
-- **Memory Safety**: Automatic cleanup of C-allocated resources
+Portfolio Lab is a comprehensive financial analysis tool that enables users to optimize investment portfolios through advanced statistical methods. The application combines traditional portfolio optimization techniques with Monte Carlo simulations to provide detailed risk assessment and performance forecasting.
 
 ## Features
 
@@ -47,7 +14,7 @@ The `portfolio_interface.py` module provides:
 - **Equal Weight**: Benchmark against naive diversification strategy
 
 ### Advanced Analytics
-- **High-Speed Monte Carlo**: C-optimized simulation engine with OpenMP parallelization
+- **Monte Carlo Simulation**: Generate thousands of potential portfolio paths
 - **Risk Metrics**: VaR, CVaR, Maximum Drawdown analysis
 - **Performance Statistics**: Sharpe ratio, Skewness, Kurtosis
 - **Correlation Analysis**: Asset correlation matrix visualization
@@ -124,23 +91,10 @@ Max_DD = min(DD(t)) for all t
 ### Prerequisites
 ```bash
 Python 3.8+
-GCC Compiler (for C engine compilation)
+pip install -r requirements.txt
 ```
 
-### System Dependencies
-**Linux/Mac:**
-```bash
-sudo apt-get install gcc libomp-dev  # Ubuntu/Debian
-brew install gcc libomp              # macOS
-```
-
-**Windows:**
-```bash
-# Install MinGW or Visual Studio Build Tools
-# OpenMP support included with most modern compilers
-```
-
-### Required Python Dependencies
+### Required Dependencies
 ```python
 streamlit>=1.28.0
 numpy>=1.24.0
@@ -148,25 +102,10 @@ pandas>=2.0.0
 plotly>=5.15.0
 scipy>=1.10.0
 yfinance>=0.2.0
-ctypes            
 ```
 
-### Compilation & Setup
+### Running the Application
 ```bash
-# Clone repository
-git clone https://github.com/real-veersandhu/portfolio-lab.git
-cd portfolio-lab
-
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Compile C engine with OpenMP support
-gcc -O3 -march=native -fopenmp -fPIC -shared -o portfolio_engine.so portfolio_engine.c
-
-# Alternative: Compile without OpenMP
-gcc -O3 -march=native -fPIC -shared -o portfolio_engine.so portfolio_engine.c
-
-# Run application
 streamlit run app.py
 ```
 
@@ -216,19 +155,102 @@ Choose from three optimized portfolios:
 
 ## Technical Architecture
 
-### C Engine Implementation
+### Caching Strategy
+The application implements Streamlit's `@st.cache_data` decorator for:
+- Historical data fetching
+- Monte Carlo simulations
+- Advanced metrics calculations
 
-#### High-Performance Computing Features
-- **Custom RNG**: Fast linear congruential generator with Box-Muller transform
-- **SIMD Optimization**: Compiler vectorization with `-march=native`
-- **OpenMP Parallelization**: Multi-threaded Monte Carlo simulations
-- **Memory Efficiency**: Contiguous memory allocation and cache-friendly algorithms
+This reduces computation time and improves user experience.
 
-#### Core C Functions
-```c
-SimulationResults* monte_carlo_simulation(Portfolio *portfolio, 
-                                        int simulation_years, 
-                                        int n_simulations, 
-                                        double initial_value);
+### Session State Management
+Key variables stored in `st.session_state`:
+- Optimized portfolio weights
+- Historical returns data
+- Simulation parameters
+- Analysis completion status
 
-void calculate_covariance(double *retur
+### Optimization Algorithm
+Uses SciPy's `minimize()` with SLSQP method:
+- **Objective Functions**: Negative Sharpe ratio or portfolio volatility
+- **Constraints**: Weight sum equals 1
+- **Bounds**: Individual weights between 0 and 1
+- **Initial Guess**: Equal-weight allocation
+
+## Statistical Validation
+
+### Assumptions
+1. **Log-normal returns**: Asset returns follow normal distribution
+2. **Constant parameters**: Mean and covariance remain stable
+3. **Efficient markets**: No transaction costs or taxes
+4. **Liquidity**: Instant buying/selling at market prices
+
+### Limitations
+- Historical performance doesn't guarantee future results
+- Assumes returns are independently and identically distributed
+- Black swan events not captured in historical data
+- Model risk from parameter estimation uncertainty
+
+## Contributing
+
+### Development Setup
+```bash
+git clone https://github.com/username/portfolio-lab.git
+cd portfolio-lab
+pip install -r requirements.txt
+```
+
+### Code Structure
+```
+portfolio-lab/
+├── app.py                   # Main application
+├── portfolio_engine.c       # C calculation engine
+├── portfolio_interface.py   # Interface between app & engine
+├── data/
+│   └── combined_stocks.csv  # Stock ticker set
+├── requirements.txt         # Dependencies
+└── README.md                # Documentation
+```
+
+### Testing
+Run unit tests for optimization functions:
+```bash
+python -m pytest tests/
+```
+
+## Performance Considerations
+
+### Computational Complexity
+- **Portfolio Optimization**: O(n³) for n assets (covariance matrix inversion)
+- **Monte Carlo Simulation**: O(m × t) for m simulations and t time steps
+- **Risk Calculations**: O(m log m) for sorting simulation results
+
+### Memory Usage
+- Simulation matrix: ~8MB for 10,000 simulations × 1,260 days (5 years)
+- Caching reduces redundant calculations
+- Efficient NumPy operations for matrix computations
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Acknowledgments
+
+Built with:
+- **Streamlit**: Web application framework
+- **Plotly**: Interactive visualizations
+- **SciPy**: Numerical optimization
+- **Yahoo Finance**: Market data API
+- **NumPy/Pandas**: Numerical computing
+
+## Author
+
+**Veer Sandhu** - 2025
+
+---
+
+*Portfolio Lab leverages fundamental statistical principles and modern computational methods to democratize quantitative portfolio management.*
+
+## Disclaimer
+
+This application is for educational and research purposes only. Past performance does not guarantee future results. Always consult with qualified financial advisors before making investment decisions. 
