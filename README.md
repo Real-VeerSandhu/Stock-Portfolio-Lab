@@ -25,9 +25,7 @@ Portfolio Lab is a comprehensive financial analysis tool that enables users to o
 - Final value distribution histograms
 - Asset correlation heatmaps
 
-## Technical Implementation
-
-### Mathematical Foundation
+## Models
 
 #### Modern Portfolio Theory (MPT)
 The application implements Harry Markowitz's Modern Portfolio Theory to find optimal asset allocations:
@@ -104,16 +102,6 @@ pandas>=2.0.0
 plotly>=5.15.0
 scipy>=1.10.0
 yfinance>=0.2.0
-```
-
-### Data Requirements
-Create a `data/` directory with `combined_stocks.csv` containing:
-```csv
-TICKER,NAME
-AAPL,Apple Inc. Common Stock
-MSFT,Microsoft Corporation Common Stock
-GOOGL,Alphabet Inc. Class A Common Stock
-...
 ```
 
 ### Running the Application
