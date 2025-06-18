@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 # Page config
 st.set_page_config(
-    page_title="Portfolio Optimizer & Simulator",
+    page_title="Portfolio Lab",
     page_icon="📈",
     layout="wide"
 )
@@ -24,7 +24,6 @@ if 'optimal_weights_minvol' not in st.session_state:
     st.session_state.optimal_weights_minvol = None
 if 'equal_weights' not in st.session_state:
     st.session_state.equal_weights = None
-
 if 'analysis_complete' not in st.session_state:
     st.session_state.analysis_complete = False
 if 'returns' not in st.session_state:
@@ -59,46 +58,43 @@ csv_file = "data/combined_stocks.csv"
 df = load_ticker_data(csv_file)
 
 # Title and description
-st.title("Portfolio Optimization & Monte Carlo Simulation")
-st.markdown("*Quantitative finance tool for portfolio analysis and risk management*")
+
+st.markdown(
+    """
+    Welcome to `Portfolio Lab` - a quantitative finance tool for portfolio optimization and risk management
+    # Portfolio Optimization & Monte Carlo Simulation
+    """
+)
 
 # Sidebar for inputs
 st.sidebar.header("Portfolio Configuration")
-
-# Default stock symbols
-default_stocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX']
-
-# Stock selection
-stocks_input = st.sidebar.text_input(
-    "Enter stock symbols (comma-separated):",
-    value=','.join(default_stocks[:5]),
-    help="Enter stock symbols separated by commas"
-)
-
-stocks = [stock.strip().upper() for stock in stocks_input.split(',') if stock.strip()]
-
 
 # Multi-select widget
 selected_options = st.sidebar.multiselect(
     "Choose your tickers:",
     options=df['display_option'].tolist(),
-    default=['NVDA - NVIDIA Corporation Common Stock', 'JPM - JP Morgan Chase & Co. Common Stock', 'V - Visa Inc.', 'WMT - Walmart Inc. Common Stock'],
+    default=['NVDA - NVIDIA Corporation Common Stock', 'JPM - JP Morgan Chase & Co. Common Stock', 'WMT - Walmart Inc. Common Stock'],
     help="You can select multiple stocks (Ticker - Company Name)."
 )
 
 select_tickers = [item.split(' - ')[0] for item in selected_options]
 
-
-st.caption(selected_options)
-st.caption(select_tickers)
 stocks = select_tickers
+
+year_map = {
+    '1 Year': '1y',
+    '2 Years': '2y',
+    '3 Years': '3y',
+    '5 Years': '5y',
+}
 
 # Time period for historical data
 lookback_period = st.sidebar.selectbox(
     "Historical data period:",
-    ['1y', '2y', '3y', '5y'],
+    ['1 Year', '2 Years', '3 Years', '5 Years'],
     index=2
 )
+lookback_period = year_map[lookback_period]
 
 # Risk-free rate
 risk_free_rate = st.sidebar.number_input(
@@ -267,7 +263,7 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📈 Monte Carlo Simulation Results")
+        st.subheader("Monte Carlo Simulation Results")
         
         # Plot simulation paths
         fig_sim = go.Figure()
@@ -312,7 +308,7 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
         st.plotly_chart(fig_sim, use_container_width=True)
     
     with col2:
-        st.subheader("📊 Final Value Distribution")
+        st.subheader("Final Value Distribution")
         
         final_values = simulations[:, -1]
         
@@ -341,7 +337,7 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
         st.plotly_chart(fig_hist, use_container_width=True)
     
     # Advanced metrics table
-    st.subheader("🔍 Advanced Risk & Performance Metrics")
+    st.subheader("Risk & Performance Metrics")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -351,7 +347,7 @@ def display_statistics(returns, selected_weights, simulation_years, num_simulati
         col.metric(metric, value)
     
     # Correlation matrix
-    st.subheader("🔗 Asset Correlation Matrix")
+    st.subheader("Asset Correlation Matrix")
     corr_matrix = returns.corr()
     
     fig_corr = go.Figure()
@@ -408,10 +404,11 @@ if run_botton or st.session_state.analysis_complete:
                     weights_df_sharpe = pd.DataFrame({
                         'Stock': stocks,
                         'Weight': optimal_weights_sharpe
-                    }).sort_values('Weight', ascending=False)
+                    }).sort_values('Stock', ascending=False)
                     
                     fig_pie_sharpe = px.pie(weights_df_sharpe, values='Weight', names='Stock', 
                                           title="Optimal Weights (Max Sharpe)")
+                    fig_pie_sharpe.update_traces(sort=False)
                     st.plotly_chart(fig_pie_sharpe, use_container_width=True)
                     
                     st.metric("Expected Return", f"{port_return_sharpe:.2%}")
@@ -470,7 +467,7 @@ if run_botton or st.session_state.analysis_complete:
 # Portfolio selection and simulation (outside the button block)
 if run_botton or st.session_state.get('analysis_complete', False):
     if st.session_state.data:
-        st.subheader("🎯 Select Portfolio for Simulation")
+        st.subheader("Select Portfolio for Simulation")
         portfolio_choice = st.selectbox(
             "Choose portfolio:",
             ["Maximum Sharpe Ratio", "Minimum Volatility", "Equal Weight"],
@@ -490,137 +487,9 @@ if run_botton or st.session_state.get('analysis_complete', False):
             display_statistics(st.session_state.returns, st.session_state.equal_weights, 
                             st.session_state.simulation_years, st.session_state.num_simulations, 
                             st.session_state.initial_investment)
-                # Run Monte Carlo simulation
-                # with st.spinner("Running Monte Carlo simulation..."):
-                #     simulations = monte_carlo_simulation(returns, selected_weights, 
-                #                                        simulation_years, num_simulations, 
-                #                                        initial_investment)
-                    
-                #     # Calculate advanced metrics
-                #     metrics = calculate_advanced_metrics(returns, selected_weights, simulations)
-                
-            #     simulations = cached_monte_carlo_simulation(returns, selected_weights, 
-            #                                         simulation_years, num_simulations, 
-            #                                         initial_investment)
-                
-            #     # Calculate advanced metrics
-            #     metrics = cached_calculate_advanced_metrics(returns, selected_weights, simulations)
-            
-            #     # Display simulation results
-            #     col1, col2 = st.columns(2)
-                
-            #     with col1:
-            #         st.subheader("📈 Monte Carlo Simulation Results")
-                    
-            #         # Plot simulation paths
-            #         fig_sim = go.Figure()
-                    
-            #         # Plot sample paths
-            #         time_axis = np.arange(0, simulation_years * 252) / 252
-            #         for i in range(min(50, num_simulations)):  # Show max 50 paths
-            #             fig_sim.add_trace(go.Scatter(
-            #                 x=time_axis, y=simulations[i],
-            #                 mode='lines', line=dict(width=0.5, color='lightblue'),
-            #                 showlegend=False, hovertemplate='Year: %{x:.1f}<br>Value: $%{y:,.0f}'
-            #             ))
-                    
-            #         # Add percentiles
-            #         percentiles = np.percentile(simulations, [5, 50, 95], axis=0)
-                    
-            #         fig_sim.add_trace(go.Scatter(
-            #             x=time_axis, y=percentiles[1],
-            #             mode='lines', line=dict(width=3, color='red'),
-            #             name='Median', hovertemplate='Year: %{x:.1f}<br>Value: $%{y:,.0f}'
-            #         ))
-                    
-            #         fig_sim.add_trace(go.Scatter(
-            #             x=time_axis, y=percentiles[2],
-            #             mode='lines', line=dict(width=2, color='green'),
-            #             name='95th Percentile', hovertemplate='Year: %{x:.1f}<br>Value: $%{y:,.0f}'
-            #         ))
-                    
-            #         fig_sim.add_trace(go.Scatter(
-            #             x=time_axis, y=percentiles[0],
-            #             mode='lines', line=dict(width=2, color='orange'),
-            #             name='5th Percentile', hovertemplate='Year: %{x:.1f}<br>Value: $%{y:,.0f}'
-            #         ))
-                    
-            #         fig_sim.update_layout(
-            #             title=f"Portfolio Value Simulation ({num_simulations:,} paths)",
-            #             xaxis_title="Years",
-            #             yaxis_title="Portfolio Value ($)",
-            #             hovermode='x unified'
-            #         )
-                    
-            #         st.plotly_chart(fig_sim, use_container_width=True)
-                
-            #     with col2:
-            #         st.subheader("📊 Final Value Distribution")
-                    
-            #         final_values = simulations[:, -1]
-                    
-            #         fig_hist = go.Figure()
-            #         fig_hist.add_trace(go.Histogram(
-            #             x=final_values,
-            #             nbinsx=50,
-            #             name="Final Values",
-            #             marker_color='lightblue',
-            #             opacity=0.7
-            #         ))
-                    
-            #         # Add vertical lines for key statistics
-            #         fig_hist.add_vline(x=np.median(final_values), line_dash="dash", 
-            #                          line_color="red", annotation_text="Median")
-            #         fig_hist.add_vline(x=initial_investment, line_dash="dash", 
-            #                          line_color="black", annotation_text="Initial")
-                    
-            #         fig_hist.update_layout(
-            #             title=f"Distribution of Final Portfolio Values (Year {simulation_years})",
-            #             xaxis_title="Final Portfolio Value ($)",
-            #             yaxis_title="Frequency",
-            #             bargap=0.1
-            #         )
-                    
-            #         st.plotly_chart(fig_hist, use_container_width=True)
-                
-            #     # Advanced metrics table
-            #     st.subheader("🔍 Advanced Risk & Performance Metrics")
-                
-            #     col1, col2, col3, col4 = st.columns(4)
-                
-            #     metrics_list = list(metrics.items())
-            #     for i, (metric, value) in enumerate(metrics_list):
-            #         col = [col1, col2, col3, col4][i % 4]
-            #         col.metric(metric, value)
-                
-            #     # Correlation matrix
-            #     st.subheader("🔗 Asset Correlation Matrix")
-            #     corr_matrix = returns.corr()
-                
-            #     fig_corr = go.Figure()
-            #     fig_corr.add_trace(go.Heatmap(
-            #         z=corr_matrix.values,
-            #         x=corr_matrix.columns,
-            #         y=corr_matrix.columns,
-            #         colorscale='RdBu',
-            #         zmid=0,
-            #         text=np.round(corr_matrix.values, 2),
-            #         texttemplate="%{text}",
-            #         textfont={"size": 10},
-            #         hovertemplate='%{x} vs %{y}<br>Correlation: %{z:.3f}<extra></extra>'
-            #     ))
-                
-            #     fig_corr.update_layout(
-            #         title="Asset Correlation Matrix",
-            #         width=600,
-            #         height=500
-            #     )
-                
-            #     st.plotly_chart(fig_corr, use_container_width=True)
-                
-            
 
 # Footer
 st.markdown("---")
-st.markdown("*Built with Python, Scipy, Yahoo Finance, and Streamlit, powered by quantitative finance principles and statistics*")
+st.markdown("*Built with Python, Scipy, Yahoo Finance, and Streamlit, powered by fundamental statistics*")
 st.markdown("**Features:** Modern Portfolio Theory • Monte Carlo Simulation • Risk Metrics • VaR/CVaR Analysis")
+st.caption('Veer Sandhu - 2025')
