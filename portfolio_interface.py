@@ -125,6 +125,7 @@ class PortfolioEngineC:
         
         return results
 
+
 # Modified Streamlit functions to use C engine
 def calculate_advanced_metrics_c(returns, weights, c_engine, simulation_years=5, 
                                n_simulations=1000, initial_investment=100000):
