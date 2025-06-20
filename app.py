@@ -490,7 +490,7 @@ if run_botton or st.session_state.get('analysis_complete', False):
 
 # Footer
 st.markdown("---")
-st.markdown("*Built with Python, Scipy, Yahoo Finance, and Streamlit, powered by fundamental statistics*")
+st.markdown("*Built with Python, C, Scipy, Yahoo Finance, and Streamlit, powered by fundamental statistics*")
 st.markdown("**Features:** Modern Portfolio Theory • Monte Carlo Simulation • Risk Metrics • VaR/CVaR Analysis")
 st.caption('Veer Sandhu - 2025')
 st.caption("[Github](https://github.com/Real-VeerSandhu/Stock-Portfolio-Lab)")
