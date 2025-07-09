@@ -401,10 +401,14 @@ if run_botton or st.session_state.analysis_complete:
                     port_return_sharpe, port_vol_sharpe, sharpe_sharpe = calculate_portfolio_metrics(returns, optimal_weights_sharpe)
                     
                     # Display weights
+                    # weights_df_sharpe = pd.DataFrame({
+                    #     'Stock': stocks,
+                    #     'Weight': optimal_weights_sharpe
+                    # }).sort_values('Stock', ascending=False)
                     weights_df_sharpe = pd.DataFrame({
                         'Stock': stocks,
                         'Weight': optimal_weights_sharpe
-                    }).sort_values('Stock', ascending=False)
+                    })
                     
                     fig_pie_sharpe = px.pie(weights_df_sharpe, values='Weight', names='Stock', 
                                           title="Optimal Weights (Max Sharpe)")
