@@ -410,6 +410,8 @@ if run_botton or st.session_state.analysis_complete:
                         'Weight': optimal_weights_sharpe
                     })
                     
+
+                    
                     fig_pie_sharpe = px.pie(weights_df_sharpe, values='Weight', names='Stock', 
                                           title="Optimal Weights (Max Sharpe)")
                     fig_pie_sharpe.update_traces(sort=False)
