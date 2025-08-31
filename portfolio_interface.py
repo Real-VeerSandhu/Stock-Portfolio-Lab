@@ -8,7 +8,6 @@ class PortfolioEngineC:
     """Python interface to the C portfolio engine"""
     
     def __init__(self, library_path="./portfolio_engine.so"):
-        """Initialize the C library interface"""
         if not os.path.exists(library_path):
             raise FileNotFoundError(f"C library not found at {library_path}")
         
@@ -16,9 +15,7 @@ class PortfolioEngineC:
         self._setup_function_signatures()
     
     def _setup_function_signatures(self):
-        """Define C function signatures for proper interface"""
         
-        # run_portfolio_simulation function
         self.lib.run_portfolio_simulation.argtypes = [
             ndpointer(ctypes.c_double, flags="C_CONTIGUOUS"),  # returns_data
             ndpointer(ctypes.c_double, flags="C_CONTIGUOUS"),  # weights
@@ -129,19 +126,15 @@ class PortfolioEngineC:
 # Modified Streamlit functions to use C engine
 def calculate_advanced_metrics_c(returns, weights, c_engine, simulation_years=5, 
                                n_simulations=1000, initial_investment=100000):
-    """Calculate advanced metrics using C engine"""
     
-    # Run C simulation
     results = c_engine.run_monte_carlo_simulation(
         returns, weights, simulation_years=simulation_years,
         n_simulations=n_simulations, initial_value=initial_investment
     )
     
-    # Format for Streamlit display
     metrics = results['metrics']
     final_values = results['final_values']
     
-    # Calculate additional metrics
     prob_profit = (final_values > initial_investment).mean()
     
     formatted_metrics = {
@@ -172,10 +165,7 @@ def monte_carlo_simulation_c(returns, weights, years, n_sims, initial_value, c_e
     return results['simulations']
 
 # Integration example for your main app
-def integrate_c_engine():
-    """Example of how to integrate C engine into your Streamlit app"""
-    
-    # Initialize C engine (do this once at app startup)
+def integrate_c_engine():    
     try:
         c_engine = PortfolioEngineC("./portfolio_engine.so")
         return c_engine
@@ -201,5 +191,3 @@ def display_statistics_c(returns, selected_weights, simulation_years, num_simula
                                            initial_investment)
         metrics = calculate_advanced_metrics(returns, selected_weights, simulations)
     
-    # Rest of your display logic remains the same
-    # ... existing plotting and display code ...
