@@ -4,7 +4,7 @@ A quantitative finance [application](https://portfolio-lab.streamlit.app/) for p
 
 ## Overview
 
-Portfolio Lab is a comprehensive financial analysis tool that enables users to optimize investment portfolios through statistical methods. The application combines traditional portfolio optimization techniques with Monte Carlo simulations to provide detailed risk assessment and performance forecasting. **Key differentiator**: Core computational functions are implemented in C for maximum performance, with a Python interface for ease of use.
+Portfolio Lab is a comprehensive financial analysis tool that enables users to optimize investment portfolios through statistical methods. The application combines traditional portfolio optimization techniques with Monte Carlo simulations to provide detailed risk assessment and performance forecasting. Core computational functions are implemented in C for performance, with a Python interface for ease of use.
 
 ![Sample](https://github.com/Real-VeerSandhu/Stock-Portfolio-Lab/blob/master/demo.png)
 
