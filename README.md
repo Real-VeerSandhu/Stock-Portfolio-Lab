@@ -215,9 +215,3 @@ Choose from three optimized portfolios:
 - **Percentile Analysis**: 5th, 50th, 95th percentile outcomes
 - **Path Visualization**: Sample simulation trajectories
 
-
-## Disclaimer
-
-This application is for experimentation and research purposes only. Past performance does not guarantee future results. Always consult with qualified financial advisors before making investment decisions (please buy broad market ETFs).
-
-Veer Sandhu - 2025
